@@ -1,0 +1,33 @@
+filebeat.registry.path: /usr/share/filebeat/data/registry
+
+filebeat.modules:
+# Nginx
+- module: nginx
+  access:
+    var.paths: ["/var/www/vhosts/system/*/logs/proxy_access_ssl_log"]
+  error:
+    var.paths: ["/var/www/vhosts/system/*/logs/proxy_error_log"]
+
+# MySQL module consumes error and mysql-slow logs from mounted volume.
+- module: mysql
+  error:
+    var.paths: ["/var/log/mysql/error.log"]
+  slowlog:
+    var.paths: ["/var/log/mysql/slow.log"]
+
+
+monitoring.enabled: true
+
+output.elasticsearch:
+  hosts: ["${ELASTIC_HOST}:9200"]
+  username: ${ELASTIC_USERNAME}
+  password: ${ELASTIC_PASSWORD}
+
+logging.to_files: false
+
+setup.kibana:
+  host: "${KIBANA_HOST}:5601"
+  username: ${KIBANA_USERNAME}
+  password: ${KIBANA_PASSWORD}
+
+setup.dashboards.enabled: true
